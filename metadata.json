@@ -1,0 +1,7 @@
+{
+  "name": "TosaFix Start",
+  "description": "A stunning, customizable new tab page featuring news, weather, currency, and daily inspiration.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
