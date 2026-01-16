@@ -1,3 +1,4 @@
+
 // Weather Types
 export interface WeatherData {
     weather: Array<{ description: string; icon?: string }>;
@@ -18,6 +19,20 @@ export interface WeatherData {
   // Proverb Types
   export interface ProverbData {
     proverb: string;
+  }
+
+  // Zmanim Types
+  export interface ZmanimData {
+    alot: Date;
+    sunrise: Date;
+    szksMga: Date;
+    szksGra: Date;
+    sztMga: Date;
+    sztGra: Date;
+    chatzot: Date;
+    sunset: Date;
+    tzeit: Date;
+    dafYomi: string;
   }
   
   // News Types
@@ -62,4 +77,10 @@ export interface WeatherData {
     searchEngine: SearchEngine;
     hiddenCategories: string[]; // List of categories user wants to hide
     isDarkMode: boolean;
+  }
+
+  // Cache Types
+  export interface CachedData<T> {
+    data: T;
+    timestamp: number;
   }

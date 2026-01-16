@@ -6,7 +6,7 @@ export const NEWS_API_URL = 'https://tfx-news.onrender.com/news';
 export const SEARCH_ENGINES: Record<SearchEngine, { url: string; icon: string }> = {
   [SearchEngine.GOOGLE]: {
     url: 'https://www.google.com/search?q=',
-    icon: 'https://www.google.com/favicon.ico',
+    icon: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYqtlke0Nl8HstVgDLuHI0JGmgqqt88X-BAw&s',
   },
   [SearchEngine.BING]: {
     url: 'https://www.bing.com/search?q=',
@@ -14,11 +14,11 @@ export const SEARCH_ENGINES: Record<SearchEngine, { url: string; icon: string }>
   },
   [SearchEngine.DUCKDUCKGO]: {
     url: 'https://duckduckgo.com/?q=',
-    icon: 'https://duckduckgo.com/favicon.ico',
+    icon: 'https://upload.wikimedia.org/wikipedia/en/9/90/The_DuckDuckGo_Duck.png',
   },
   [SearchEngine.YANDEX]: {
     url: 'https://yandex.com/search/?text=',
-    icon: 'https://yandex.com/favicon.ico',
+    icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Yandex_Browser_icon.svg/2048px-Yandex_Browser_icon.svg.png',
   },
 };
 
