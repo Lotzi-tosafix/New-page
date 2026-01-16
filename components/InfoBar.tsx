@@ -4,8 +4,10 @@ import { WeatherData, CurrencyData, ProverbData, ZmanimData } from '../types';
 import { fetchCurrency, fetchProverb, fetchWeather } from '../services/api';
 import { CURRENCY_LABELS, WEATHER_TRANSLATIONS } from '../constants';
 import { CACHE_KEYS, getFromCache, saveToCache, shouldUpdateHourly } from '../services/cacheService';
+// Zmanim, GeoLocation, HDate and DailyLearning are all in @hebcal/core
 import { Zmanim, GeoLocation, HDate, DailyLearning } from '@hebcal/core';
-// Note: @hebcal/learning is imported in the background via DailyLearning.lookup if registered
+// Import dafYomi to ensure @hebcal/learning is loaded and registered
+import { dafYomi } from '@hebcal/learning';
 
 interface InfoBarProps {
   isTransparent: boolean;
@@ -26,31 +28,35 @@ const InfoBar: React.FC<InfoBarProps> = ({ isTransparent }) => {
   const calculateZmanim = (lat: number, lon: number) => {
     try {
         const now = new Date();
-        // Use GeoLocation with proper timezone for Israel
-        const loc = new GeoLocation("User Location", lat, lon, 0, 'Asia/Jerusalem'); 
+        
+        // System timezone ensures calculations match the user's system clock
+        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        
+        const loc = new GeoLocation("User Location", lat, lon, 0, userTimezone);
         const hd = new HDate(now);
         
-        // Zmanim calculation - using false for useElevation for standard display
+        // Zmanim calculation
         const z = new Zmanim(loc, hd, false);
         
-        // Accurate Daf Yomi retrieval using DailyLearning
+        // Daf Yomi retrieval using DailyLearning lookup
         const dafEvent = DailyLearning.lookup('dafYomi', hd);
         let dafYomiStr = 'לא נמצא';
+        
         if (dafEvent) {
-            // Render in Hebrew and clean prefix
+            // Render in Hebrew and clean prefix for clean UI
             dafYomiStr = dafEvent.render('he').replace('דף יומי: ', '');
         }
 
         const data: ZmanimData = {
-            alot: z.alotHaShachar(), 
+            alot: z.alotHaShachar(),
             sunrise: z.sunrise(),
-            szksMga: z.sofZmanShmaMGA(), 
-            szksGra: z.sofZmanShma(), 
+            szksMga: z.sofZmanShmaMGA(),
+            szksGra: z.sofZmanShma(),
             sztMga: z.sofZmanTfillaMGA(),
             sztGra: z.sofZmanTfilla(),
             chatzot: z.chatzot(),
             sunset: z.sunset(),
-            tzeit: z.tzeit(), 
+            tzeit: z.tzeit(),
             dafYomi: dafYomiStr,
         };
         setZmanim(data);
@@ -75,7 +81,7 @@ const InfoBar: React.FC<InfoBarProps> = ({ isTransparent }) => {
     };
 
     const handleDefaultLocation = async () => {
-        calculateZmanim(31.7683, 35.2137); // Default to Jerusalem
+        calculateZmanim(31.7683, 35.2137); // Jerusalem default
         if (!cachedWeather || shouldUpdateHourly(cachedWeather.timestamp)) {
             const w = await fetchWeather(undefined, undefined, 'Jerusalem');
             if (w) {
@@ -88,7 +94,10 @@ const InfoBar: React.FC<InfoBarProps> = ({ isTransparent }) => {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             (position) => handleLocation(position.coords.latitude, position.coords.longitude),
-            () => handleDefaultLocation()
+            (error) => {
+                console.warn("Geolocation failed, using default:", error);
+                handleDefaultLocation();
+            }
         );
     } else {
         handleDefaultLocation();
